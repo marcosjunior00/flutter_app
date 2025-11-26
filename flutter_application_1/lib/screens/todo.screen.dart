@@ -21,6 +21,43 @@ class _TodoScreenState extends State<TodoScreen> {
   List<Task> tasks = [];
   bool loading = true;
 
+  String _formatarDataAtual() {
+    final now = DateTime.now();
+    // Lista de nomes dos dias da semana (começando por segunda-feira = 1)
+    const diasSemana = [
+      'Segunda-feira',
+      'Terça-feira',
+      'Quarta-feira',
+      'Quinta-feira',
+      'Sexta-feira',
+      'Sábado',
+      'Domingo'
+    ];
+    const mesesAno = [
+      '',
+      'janeiro',
+      'fevereiro',
+      'março',
+      'abril',
+      'maio',
+      'junho',
+      'julho',
+      'agosto',
+      'setembro',
+      'outubro',
+      'novembro',
+      'dezembro'
+    ];
+
+    final nomeDia = diasSemana[now.weekday - 1];
+    final nomeMes = mesesAno[now.month];
+    final dia = now.day.toString().padLeft(2, '0');
+    final ano = now.year;
+
+    // Exemplo: "Quarta-feira, 29 de março de 2024"
+    return "$nomeDia, $dia de $nomeMes de $ano";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -132,9 +169,9 @@ class _TodoScreenState extends State<TodoScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Quarta-feira, 5 de novembro",
-            style: TextStyle(color: Colors.white70),
+          Text(
+            _formatarDataAtual(),
+            style: const TextStyle(color: Colors.white70),
           ),
           const SizedBox(height: 8),
           Row(
