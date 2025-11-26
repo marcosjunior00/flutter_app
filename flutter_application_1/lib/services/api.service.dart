@@ -95,8 +95,12 @@ class ApiService {
           _currentUserId = data['user']['id'];
 
           // Salvar ID do usuário nas preferências
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setInt('userId', _currentUserId!);
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('userId', _currentUserId!);
+          } catch (e) {
+            print('Erro ao salvar userId nas preferências: $e');
+          }
 
           return true;
         }
