@@ -24,7 +24,20 @@ class _TodoScreenState extends State<TodoScreen> {
   @override
   void initState() {
     super.initState();
+    loadUserData();
     loadTasks();
+  }
+
+  Future<void> loadUserData() async {
+    final user = ApiService.currentUser;
+    if (user != null) {
+      setState(() {
+        userName = user.name;
+        userEmail = user.email;
+        userPhone = user.phone ?? '';
+        avatarColor = user.avatarColorAsColor;
+      });
+    }
   }
 
   Future<void> loadTasks() async {
@@ -47,13 +60,35 @@ class _TodoScreenState extends State<TodoScreen> {
     return userName.isNotEmpty ? userName[0].toUpperCase() : '?';
   }
 
-  void updateProfile(String name, String email, String phone, Color color) {
-    setState(() {
-      userName = name;
-      userEmail = email;
-      userPhone = phone;
-      avatarColor = color;
-    });
+  Future<void> updateProfile(String name, String email, String phone, Color color) async {
+    final userId = ApiService.currentUserId ?? await ApiService.getStoredUserId();
+    if (userId == null) return;
+
+    bool success = await ApiService.updateProfile(
+      userId,
+      name,
+      email,
+      phone,
+      color.value,
+    );
+
+    if (success) {
+      setState(() {
+        userName = name;
+        userEmail = email;
+        userPhone = phone;
+        avatarColor = color;
+      });
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Erro ao atualizar perfil"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -118,7 +153,6 @@ class _TodoScreenState extends State<TodoScreen> {
                   _buildHeaderChip(
                       "$completedTasksCount concluídas", Icons.check),
                   const SizedBox(width: 8),
-                  _buildHeaderChip("0 colaboradores", Icons.people_outline),
                 ],
               ),
             ],
@@ -359,9 +393,9 @@ class _TodoScreenState extends State<TodoScreen> {
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(Icons.add_circle_outline, color: Color(0xFF9333EA)),
             SizedBox(width: 12),
             Text(
@@ -442,9 +476,11 @@ class _TodoScreenState extends State<TodoScreen> {
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () async {
-                  await ApiService.deleteTask(task.id);
-                  Navigator.pop(context);
-                  loadTasks();
+                  if (task.id != null) {
+                    await ApiService.deleteTask(task.id!);
+                    Navigator.pop(context);
+                    loadTasks();
+                  }
                 },
               )
             ],

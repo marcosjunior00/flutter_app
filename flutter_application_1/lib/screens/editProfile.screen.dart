@@ -25,12 +25,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late Color selectedColor;
 
   final List<Color> colors = [
-    Color(0xFF9333EA),
-    Color(0xFF7C3AED),
-    Color(0xFF6B46C1),
-    Color(0xFFA855F7),
-    Color(0xFF8B5CF6),
-    Color(0xFFC084FC),
+    const Color(0xFF9333EA),
+    const Color(0xFF7C3AED),
+    const Color(0xFF6B46C1),
+    const Color(0xFFA855F7),
+    const Color(0xFF8B5CF6),
+    const Color(0xFFC084FC),
   ];
 
   @override

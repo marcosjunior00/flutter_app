@@ -26,6 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _loading = false);
 
+    print(ok);
+
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -97,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
-                    primary: const Color(0xFF9C27B0),
+                    backgroundColor: const Color(0xFF9C27B0),
                   ),
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white)

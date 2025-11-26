@@ -16,15 +16,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _loading = false;
 
   void _handleRegister() async {
+    if (_name.text.isEmpty || _email.text.isEmpty || _password.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Preencha todos os campos"),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     setState(() => _loading = true);
 
-    await ApiService.register(
+    bool success = await ApiService.register(
       _name.text,
       _email.text,
       _password.text,
     );
 
     setState(() => _loading = false);
+
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Erro ao criar conta. Tente novamente."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     Navigator.pushReplacement(
       context,
@@ -68,7 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: ElevatedButton(
                 onPressed: _loading ? null : _handleRegister,
                 style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFF9C27B0),
+                  backgroundColor: const Color(0xFF9C27B0),
                 ),
                 child: _loading
                     ? const CircularProgressIndicator(color: Colors.white)
